@@ -1,0 +1,1247 @@
+/* Obsidian SmartPaste Plugin Styles */
+
+/*
+ * 样式设计参考了 Obsidian Floating TOC 插件
+ * 原始项目: https://github.com/liamcain/obsidian-floating-toc-plugin
+ * 感谢其优秀的UI设计理念
+ */
+
+/* CSS 变量定义 */
+.theme-light,
+.theme-dark {
+  --background-blur-depth: 2px;
+  --floating-toc-font-color: var(--text-normal);
+  --floating-toc-hover-color: var(--text-accent-hover);
+  --floating-toc-font-size: 0.65rem;
+  --floating-toc-highlight-color: var(--text-accent);
+  --floating-toc-highlight-color-rgb: var(--interactive-accent-hsl);
+  --floating-toc-line-color: var(--text-muted);
+  --floating-toc-line-height: 1.2rem;
+  --floating-toc-response-time: 0.3s;
+  --floating-toc-position: 0px;
+  --focus-heading: 0.9;
+  --floating-toc-line-width: 18rem;
+  --actual-toc-width: 18rem;
+  --heading-color-indicator: var(--background-secondary);
+}
+
+.theme-light {
+  --floating-toc-header-background-color: transparent;
+  --floating-toc-background-color: color-mix(in srgb, var(--color-base-20) 80%, var(--background-secondary) 20%);
+}
+
+.theme-dark {
+  --floating-toc-header-background-color: transparent;
+  --floating-toc-background-color: color-mix(in srgb, var(--color-base-20) 80%, var(--background-secondary) 20%);
+}
+
+/* Floating TOC 样式*/
+.floating-toc-div {
+  position: fixed;
+  top: 100px;
+  left: 8px;
+  width: min(var(--floating-toc-line-width, 18rem), var(--actual-toc-width, 18rem));
+  min-width: 12rem;
+  max-width: 30rem;
+  max-height: 70vh;
+  background: var(--floating-toc-background-color, var(--background-primary));
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  opacity: 0.8;
+  transition: all var(--floating-toc-response-time, 0.3s) ease;
+  font-size: var(--floating-toc-font-size, 0.7rem);
+  line-height: var(--floating-toc-line-height, 1.5rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 默认状态下的容器样�?- 保持固定宽度 */
+body.enable-bar-heading-text .floating-toc-div:not(:is(:hover, .pin)) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: 2rem;
+  min-width: 2rem;
+  max-width: 2rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* 默认状态下隐藏滚动�?*/
+body.enable-bar-heading-text .floating-toc-div:not(:is(:hover, .pin)) .floating-toc {
+  overflow: hidden;
+  padding: 0;
+}
+
+/* 默认状态下隐藏工具�?*/
+body.enable-bar-heading-text .floating-toc-div:not(:is(:hover, .pin)) .toolbar {
+  display: none;
+}
+
+/* 悬停时显示完整容�?*/
+body.enable-bar-heading-text .floating-toc-div:hover {
+  background: var(--floating-toc-background-color, var(--background-primary));
+  border: 1px solid var(--background-modifier-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: var(--panel-width, 300px);
+  min-width: 200px;
+  max-width: 600px;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* 固定时隐藏背景，只显示内�?*/
+body.enable-bar-heading-text .floating-toc-div.pin {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: var(--panel-width, 300px);
+  min-width: 200px;
+  max-width: 600px;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* 悬停时显示滚动条 */
+body.enable-bar-heading-text .floating-toc-div:hover .floating-toc {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+  flex: 1;
+  z-index: 2;
+  align-items: flex-start;
+  min-width: 6rem;
+  max-width: var(--floating-toc-line-width);
+  width: auto;
+  background: var(--floating-toc-background-color);
+  transition-delay: var(--floating-toc-response-time, 0.3s);
+}
+
+/* 固定时显示滚动条 */
+body.enable-bar-heading-text .floating-toc-div.pin .floating-toc {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+  flex: 1;
+  z-index: 2;
+  align-items: flex-start;
+  min-width: 6rem;
+  max-width: var(--floating-toc-line-width);
+  width: auto;
+  background: transparent;
+}
+
+/* 空状态样�?- 当TOC没有内容时使用更小的宽度 */
+.floating-toc-div .empty-content {
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.floating-toc-div .empty-content .text-wrap {
+  justify-content: center;
+}
+
+.floating-toc-div .empty-content .text {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: center;
+  word-break: break-word;
+}
+
+/* 空状态下的容器宽度优�?*/
+.floating-toc-div:has(.empty-content) {
+  width: 12rem;
+  min-width: 10rem;
+  max-width: 15rem;
+}
+
+/* 空状态下的悬停宽度优�?*/
+body.enable-bar-heading-text .floating-toc-div:has(.empty-content):hover {
+  width: 12rem;
+  min-width: 10rem;
+  max-width: 15rem;
+}
+
+/* 空状态下的固定宽度优�?*/
+body.enable-bar-heading-text .floating-toc-div:has(.empty-content).pin {
+  width: 12rem;
+  min-width: 10rem;
+  max-width: 15rem;
+}
+
+/* 悬停时显示工具栏 */
+body.enable-bar-heading-text .floating-toc-div:hover .toolbar {
+  display: flex;
+}
+
+/* 固定时显示工具栏 */
+body.enable-bar-heading-text .floating-toc-div.pin .toolbar {
+  display: flex;
+}
+
+.floating-toc-div:hover {
+  opacity: 1;
+}
+
+.floating-toc-div.hide {
+  display: none;
+}
+
+.floating-toc-div.pin {
+  opacity: 1;
+}
+
+/* 位置样式 - 完全按照参考代�?*/
+.floating-toc-div.floating-right {
+  left: auto;
+  right: 8px;
+}
+
+.floating-toc-div.floating-left {
+  left: 8px;
+  right: auto;
+}
+
+.floating-toc-div.floating-both {
+  left: 8px;
+  right: 8px;
+  width: auto;
+}
+
+/* 文本对齐样式 */
+.floating-toc-div.alignLeft .text {
+  text-align: left;
+}
+
+/* 工具栏样�?- 按照参考代码实�?*/
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  opacity: 0.8;
+  z-index: 2;
+  height: 32px;
+  overflow: hidden;
+  order: -1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 默认状态下隐藏工具�?*/
+body.enable-bar-heading-text .floating-toc-div:not(:is(:hover, .pin)) .toolbar {
+  display: none !important;
+}
+
+/* 悬停时显示工具栏 */
+body.enable-bar-heading-text .floating-toc-div:hover .toolbar {
+  display: flex !important;
+  opacity: 1 !important;
+  height: 32px !important;
+  padding: 4px 12px !important;
+  border-bottom: 1px solid var(--background-modifier-border) !important;
+  background: var(--background-secondary) !important;
+  pointer-events: all !important;
+}
+
+/* 固定时显示工具栏（背景透明�?*/
+body.enable-bar-heading-text .floating-toc-div.pin .toolbar {
+  display: flex !important;
+  opacity: 1 !important;
+  height: 32px !important;
+  padding: 4px 12px !important;
+  border-bottom: none !important;
+  background: transparent !important;
+  pointer-events: all !important;
+}
+
+/* 固定状态下显示工具�?*/
+.floating-toc-div.pin .toolbar {
+  display: flex !important;
+  opacity: 1 !important;
+  height: 32px !important;
+  padding: 4px 12px !important;
+  border-bottom: 1px solid var(--background-modifier-border) !important;
+  pointer-events: all !important;
+}
+
+/* 隐藏状态的工具栏样�?*/
+.toolbar.hide {
+  opacity: 0;
+  height: 0;
+  padding: 0 12px;
+  border-bottom: none;
+  pointer-events: none;
+}
+
+/* 工具栏按钮样�?- 按照参考代码实�?*/
+.toolbar button {
+  margin: 0;
+  padding: 0 10px;
+  background-color: transparent;
+  margin-right: 5px;
+  width: 10px;
+  display: inline-grid;
+  box-shadow: none;
+  transition: transform 0.3s;
+}
+
+.toolbar button svg {
+  width: 12px;
+  height: 12px;
+}
+
+.toolbar button:hover {
+  box-shadow: none;
+  color: var(--interactive-accent-hover);
+  transform: scale(1.2);
+}
+
+/* 固定状态下的工具栏 */
+.floating-toc-div.pin .toolbar.pin {
+  display: block;
+}
+
+.floating-toc-div.pin .toolbar.pin button[aria-label="pin"] {
+  color: var(--interactive-accent-hover);
+  animation: shake 0.5s 2 alternate linear;
+}
+
+/* 工具栏位置样�?- 按照参考代码实�?*/
+.floating-toc-div.floating-right .toolbar {
+  right: calc(0.5rem + var(--floating-toc-position, 0px));
+  align-items: flex-end;
+  left: unset;
+}
+
+.floating-right.floating-toc-div .toolbar.pin {
+  right: 10px;
+  left: unset;
+}
+
+/* 浮动目录列表样式 */
+.floating-toc {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  overflow-y: auto;
+  max-height: calc(70vh - 60px);
+}
+
+/* 标题列表项样�?- 优化高度 */
+.heading-list-item {
+  z-index: 1;
+  font-size: var(--floating-toc-font-size);
+  min-height: calc(var(--floating-toc-line-height) * 0.7);
+  padding: 0;
+  white-space: nowrap;
+  position: relative;
+}
+
+.heading-list-item .line-wrap {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.5rem;
+  z-index: -1;
+  animation: lineAppear 250ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes lineAppear {
+  0% {
+    transform: translateX(1rem);
+  }
+  100% {
+    transform: translateX(0rem);
+  }
+}
+
+.heading-list-item .line-wrap .line {
+  position: absolute;
+  top: 50%;
+  opacity: 0.75;
+  height: 2px;
+  width: 2rem;
+  background: var(--floating-toc-line-color);
+}
+
+.heading-list-item .text-wrap {
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  animation: textAppear 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  text-wrap: inherit;
+  min-width: 10rem;
+  transition: opacity var(--floating-toc-response-time, 0.3s) ease;
+}
+
+/* 默认状态下隐藏文本 */
+body.enable-bar-heading-text .floating-toc-div:not(:is(:hover, .pin)) .heading-list-item .text-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 悬停时显示文�?*/
+body.enable-bar-heading-text .floating-toc-div:hover .heading-list-item .text-wrap {
+  opacity: 1;
+  pointer-events: all;
+  transition-delay: var(--floating-toc-response-time, 0.3s);
+}
+
+/* 固定时显示文�?*/
+body.enable-bar-heading-text .floating-toc-div.pin .heading-list-item .text-wrap {
+  opacity: 1;
+  pointer-events: all;
+}
+
+@keyframes textAppear {
+  0% {
+    transform: translateX(-1rem);
+  }
+  100% {
+    transform: translateX(0rem);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translateX(-0.1px);
+  }
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translateX(0.1px);
+  }
+}
+
+.heading-list-item .text-wrap .text {
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.4rem;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--floating-toc-font-color);
+  background: var(--floating-toc-header-background-color);
+}
+
+.heading-list-item .text-wrap .text:hover {
+  color: var(--floating-toc-hover-color);
+  font-weight: bold;
+}
+
+.heading-list-item:hover .line-wrap .line {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.heading-list-item:hover .text-wrap {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* 标题级别缩进 */
+.heading-list-item[data-level="2"] .text-wrap {
+  margin-left: 1rem;
+}
+
+.heading-list-item[data-level="3"] .text-wrap {
+  margin-left: 2rem;
+}
+
+.heading-list-item[data-level="4"] .text-wrap {
+  margin-left: 3rem;
+}
+
+.heading-list-item[data-level="5"] .text-wrap {
+  margin-left: 4rem;
+}
+
+.heading-list-item[data-level="6"] .text-wrap {
+  margin-left: 5rem;
+}
+
+/* 高亮样式 */
+.heading-list-item.located .line-wrap .line {
+  background: hsla(var(--floating-toc-highlight-color-rgb), 1);
+  scale: 1.2;
+  opacity: 1;
+}
+
+.heading-list-item.located .text-wrap:not(.located) .text {
+  color: var(--floating-toc-highlight-color);
+}
+
+.heading-list-item .text-wrap.located .text {
+  color: var(--color-accent);
+  font-weight: bold !important;
+}
+
+.theme-dark .heading-list-item.focus .line-wrap .line {
+  filter: brightness(1.5);
+  opacity: 1;
+}
+
+.theme-light .heading-list-item.focus .line-wrap .line {
+  filter: brightness(0.8);
+  opacity: 1;
+}
+
+/* 折叠展开样式 */
+.heading-list-item[iscollapsed="true"] .text-wrap {
+  opacity: 0.5;
+}
+
+.heading-list-item[iscollapsed="true"] .line-wrap .line {
+  opacity: 0.3;
+}
+
+/* 单行显示样式 */
+body.enable-heading-nowrap .floating-toc-div.pin .floating-toc .heading-list-item>.text-wrap {
+  max-width: unset;
+}
+
+body.enable-heading-nowrap .heading-list-item .text-wrap .text {
+  max-width: calc(var(--floating-toc-line-width) - 3rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 默认状态下（非hover非pin）根据标题级别的指示条缩�?*/
+.floating-toc-div:not(:is(:hover, .pin)) .heading-list-item[data-level="1"] {
+  margin-left: 0px;
+}
+
+.floating-toc-div:not(:is(:hover, .pin)) .heading-list-item[data-level="2"] {
+  margin-left: 0px;
+}
+
+.floating-toc-div:not(:is(:hover, .pin)) .heading-list-item[data-level="3"] {
+  margin-left: 0px;
+}
+
+.floating-toc-div:not(:is(:hover, .pin)) .heading-list-item[data-level="4"] {
+  margin-left: 0px;
+}
+
+.floating-toc-div:not(:is(:hover, .pin)) .heading-list-item[data-level="5"] {
+  margin-left: 8px;
+}
+
+.floating-toc-div:not(:is(:hover, .pin)) .heading-list-item[data-level="6"] {
+  margin-left: 16px;
+}
+
+/* 边缘指示器图标样�?- 默认状态时显示（无论是否有内容�?*/
+.floating-toc-div:not(:is(:hover, .pin)) .floating-toc::before {
+  content: '';
+  height: 12px;
+  z-index: 10;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  text-align: right;
+  padding: 4px 20px;
+  margin-bottom: 2px;
+  border-radius: 5px;
+  font-weight: 500;
+  font-size: var(--font-adaptive-small);
+  opacity: 1;
+  background-position: center center;
+  background-size: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg t='1671519666455' class='icon' viewBox='0 0 1024 1024' version='1.1' xmlns='http://www.w3.org/2000/svg' p-id='11772' width='16' height='16'%3E%3Cpath d='M887.212102 264.644379 320.083527 264.644379c-29.826306 0-54.012148-23.896246-54.012148-53.723575s24.185842-53.723575 54.012148-53.723575l567.127552 0c29.827329 0 54.012148 23.896246 54.012148 53.723575S917.039431 264.644379 887.212102 264.644379zM887.212102 562.426483 320.083527 562.426483c-29.826306 0-54.012148-24.408923-54.012148-54.235229 0-29.828352 24.185842-54.235229 54.012148-54.235229l567.127552 0c29.827329 0 54.012148 24.406876 54.012148 54.235229C941.22425 538.018583 917.039431 562.426483 887.212102 562.426483zM887.212102 859.18528 320.083527 859.18528c-29.826306 0-54.012148-24.407899-54.012148-54.235229s24.185842-54.235229 54.012148-54.235229l567.127552 0c29.827329 0 54.012148 24.407899 54.012148 54.235229S917.039431 859.18528 887.212102 859.18528zM153.565003 257.94377l-47.261397 0c-13.05534 0-23.630187-10.601452-23.630187-23.655769l0-47.234791c0-13.080923 10.574846-23.630187 23.630187-23.630187l47.261397 0c13.054317 0 23.630187 10.549264 23.630187 23.630187l0 47.234791C177.19519 247.341295 166.61932 257.94377 153.565003 257.94377L153.565003 257.94377zM153.565003 852.076372l-47.261397 0c-13.05534 0-23.630187-10.600429-23.630187-23.655769l0-47.233768c0-13.080923 10.574846-23.63121 23.630187-23.63121l47.261397 0c13.054317 0 23.630187 10.550287 23.630187 23.63121l0 47.233768C177.19519 841.475943 166.61932 852.076372 153.565003 852.076372L153.565003 852.076372zM153.565003 541.507034l-47.261397 0c-13.05534 0-23.630187-10.601452-23.630187-23.655769l0-47.234791c0-13.080923 10.574846-23.630187 23.630187-23.630187l47.261397 0c13.054317 0 23.630187 10.549264 23.630187 23.630187l0 47.234791C177.19519 530.905582 166.61932 541.507034 153.565003 541.507034L153.565003 541.507034z' fill='%23a1a1aa' p-id='11773'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.theme-light .floating-toc-div:not(:is(:hover, .pin)) .floating-toc::before {
+  background-image: url("data:image/svg+xml,%3Csvg t='1671519666455' class='icon' viewBox='0 0 1024 1024' version='1.1' xmlns='http://www.w3.org/2000/svg' p-id='11772' width='16' height='16'%3E%3Cpath d='M887.212102 264.644379 320.083527 264.644379c-29.826306 0-54.012148-23.896246-54.012148-53.723575s24.185842-53.723575 54.012148-53.723575l567.127552 0c29.827329 0 54.012148 23.896246 54.012148 53.723575S917.039431 264.644379 887.212102 264.644379zM887.212102 562.426483 320.083527 562.426483c-29.826306 0-54.012148-24.408923-54.012148-54.235229 0-29.828352 24.185842-54.235229 54.012148-54.235229l567.127552 0c29.827329 0 54.012148 24.406876 54.012148 54.235229C941.22425 538.018583 917.039431 562.426483 887.212102 562.426483zM887.212102 859.18528 320.083527 859.18528c-29.826306 0-54.012148-24.407899-54.012148-54.235229s24.185842-54.235229 54.012148-54.235229l567.127552 0c29.827329 0 54.012148 24.407899 54.012148 54.235229S917.039431 859.18528 887.212102 859.18528zM153.565003 257.94377l-47.261397 0c-13.05534 0-23.630187-10.601452-23.630187-23.655769l0-47.234791c0-13.080923 10.574846-23.630187 23.630187-23.630187l47.261397 0c13.054317 0 23.630187 10.549264 23.630187 23.630187l0 47.234791C177.19519 247.341295 166.61932 257.94377 153.565003 257.94377L153.565003 257.94377zM153.565003 852.076372l-47.261397 0c-13.05534 0-23.630187-10.600429-23.630187-23.655769l0-47.233768c0-13.080923 10.574846-23.63121 23.630187-23.63121l47.261397 0c13.054317 0 23.630187 10.550287 23.630187 23.63121l0 47.233768C177.19519 841.475943 166.61932 852.076372 153.565003 852.076372L153.565003 852.076372zM153.565003 541.507034l-47.261397 0c-13.05534 0-23.630187-10.601452-23.630187-23.655769l0-47.234791c0-13.080923 10.574846-23.630187 23.630187-23.630187l47.261397 0c13.054317 0 23.630187 10.549264 23.630187 23.630187l0 47.234791C177.19519 530.905582 166.61932 541.507034 153.565003 541.507034L153.565003 541.507034z' fill='%23666666' p-id='11773'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* 默认状态下隐藏所有列表项（包括文件列表） */
+body.enable-bar-heading-text .floating-toc-div:not(:is(:hover, .pin)) .heading-list-item {
+  display: none;
+}
+
+/* 悬停时显示所有列表项 */
+body.enable-bar-heading-text .floating-toc-div:hover .heading-list-item {
+  display: block;
+}
+
+/* 固定时显示所有列表项 */
+body.enable-bar-heading-text .floating-toc-div.pin .heading-list-item {
+  display: block;
+}
+
+/* 文件列表样式 - 移除小横�?*/
+.floating-toc {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--background-primary);
+  list-style: none;
+  margin: 0;
+}
+
+.floating-toc::-webkit-scrollbar {
+  width: 6px;
+}
+
+.floating-toc::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: 3px;
+}
+
+.floating-toc::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-bg);
+  border-radius: 3px;
+}
+
+.floating-toc::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-bg-hover);
+}
+
+.heading-list-item {
+  padding: 4px 8px;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  background: var(--background-primary);
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+}
+
+.heading-list-item:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--background-modifier-border);
+  transform: translateX(2px);
+}
+
+.heading-list-item.selected {
+  background: var(--interactive-accent-hover);
+  border-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.text-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.text {
+  font-weight: 500;
+  color: var(--text-normal);
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+/* 隐藏小横�?*/
+.line-wrap {
+  display: none;
+}
+
+.line {
+  display: none;
+}
+
+/* 工具栏按钮样�?*/
+.toolbar-btn {
+  margin: 0;
+  padding: 0 10px;
+  background-color: transparent;
+  margin-right: 5px;
+  width: 10px;
+  display: inline-grid;
+  box-shadow: none;
+  transition: transform 0.3s;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-normal);
+}
+
+.toolbar-btn:hover {
+  box-shadow: none;
+  color: var(--interactive-accent-hover);
+  transform: scale(1.2);
+}
+
+.toolbar-btn.active {
+  color: var(--interactive-accent-hover);
+}
+
+/* 其他样式保持不变 */
+.obsidian-smartpaste-panel {
+  position: absolute;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px 0 0 8px;
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  font-family: var(--font-text);
+  min-width: 260px;
+  max-width: 380px;
+  min-height: 180px;
+  max-height: 480px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.obsidian-smartpaste-panel:hover {
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.16);
+  transform: translateY(-50%) translateX(-2px);
+}
+
+.obsidian-smartpaste-panel-header {
+  background: var(--background-secondary);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+  min-height: 42px;
+}
+
+.obsidian-smartpaste-panel-title {
+  font-weight: 600;
+  color: var(--text-normal);
+  margin: 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.obsidian-smartpaste-panel-title::before {
+  content: '📄';
+  font-size: 14px;
+}
+
+.obsidian-smartpaste-panel-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.obsidian-smartpaste-panel-button {
+  background: transparent;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obsidian-smartpaste-panel-button:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+  border-color: var(--background-modifier-border-hover);
+}
+
+.obsidian-smartpaste-panel-button.close {
+  color: var(--text-error);
+  border-color: var(--background-modifier-error);
+}
+
+.obsidian-smartpaste-panel-button.close:hover {
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+}
+
+.obsidian-smartpaste-panel-content {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.obsidian-smartpaste-file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.obsidian-smartpaste-file-item {
+  padding: 4px 8px;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  background: var(--background-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+}
+
+.obsidian-smartpaste-file-item:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--background-modifier-border);
+  transform: translateX(2px);
+}
+
+.obsidian-smartpaste-file-item.selected {
+  background: var(--interactive-accent-hover);
+  border-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.obsidian-smartpaste-file-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-normal);
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+.obsidian-smartpaste-file-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.obsidian-smartpaste-file-item:hover .obsidian-smartpaste-file-actions {
+  opacity: 1;
+}
+
+.obsidian-smartpaste-file-action {
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  padding: 2px;
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obsidian-smartpaste-file-action:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.obsidian-smartpaste-empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+}
+
+.obsidian-smartpaste-empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.obsidian-smartpaste-empty-state-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.obsidian-smartpaste-create-file-modal {
+  padding: 20px;
+}
+
+.obsidian-smartpaste-create-file-modal h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--text-normal);
+}
+
+.obsidian-smartpaste-create-file-modal label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: var(--text-normal);
+}
+
+.obsidian-smartpaste-create-file-modal input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  margin-bottom: 15px;
+}
+
+.obsidian-smartpaste-create-file-modal button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.obsidian-smartpaste-create-file-modal button:first-of-type {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.obsidian-smartpaste-create-file-modal button:first-of-type:hover {
+  background-color: var(--interactive-accent-hover);
+}
+
+.obsidian-smartpaste-create-file-modal button:last-of-type {
+  background-color: var(--background-secondary);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
+}
+
+.obsidian-smartpaste-create-file-modal button:last-of-type:hover {
+  background-color: var(--background-modifier-hover);
+} 
+
+/* 文件选择器样�?*/
+.obsidian-smartpaste-file-selector .modal-content {
+  max-width: 700px;
+  max-height: 80vh;
+}
+
+.obsidian-smartpaste-description {
+  margin-bottom: 15px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.obsidian-smartpaste-search-container {
+  margin-bottom: 15px;
+}
+
+.obsidian-smartpaste-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-size: 13px;
+}
+
+.obsidian-smartpaste-search-input:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+  box-shadow: 0 0 0 2px var(--background-modifier-border);
+}
+
+.obsidian-smartpaste-file-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* 文件夹样�?*/
+.obsidian-smartpaste-folder-item {
+  margin-bottom: 4px;
+}
+
+.obsidian-smartpaste-folder-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--text-normal);
+  transition: background-color 0.2s ease;
+}
+
+.obsidian-smartpaste-folder-header:hover {
+  background: var(--background-modifier-hover);
+}
+
+.obsidian-smartpaste-folder-icon {
+  margin-right: 8px;
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.obsidian-smartpaste-folder-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.obsidian-smartpaste-file-count {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.obsidian-smartpaste-folder-children {
+  margin-left: 20px;
+  transition: all 0.3s ease;
+}
+
+/* 文件项样�?*/
+.obsidian-smartpaste-file-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.obsidian-smartpaste-file-item:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--background-modifier-border);
+}
+
+.obsidian-smartpaste-file-item.selected {
+  background: var(--interactive-accent-hover);
+  border-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.obsidian-smartpaste-file-item.selected .obsidian-smartpaste-file-name {
+  color: var(--text-on-accent);
+}
+
+.obsidian-smartpaste-file-icon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.obsidian-smartpaste-file-name {
+  font-weight: 500;
+  color: var(--text-normal);
+}
+
+.obsidian-smartpaste-file-path {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.obsidian-smartpaste-no-files {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 20px;
+  font-style: italic;
+}
+
+/* 按钮容器样式 */
+.obsidian-smartpaste-button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.obsidian-smartpaste-select-all-button,
+.obsidian-smartpaste-deselect-all-button {
+  padding: 6px 12px;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-normal);
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.obsidian-smartpaste-select-all-button:hover,
+.obsidian-smartpaste-deselect-all-button:hover {
+  background: var(--background-modifier-hover);
+}
+
+.obsidian-smartpaste-add-button {
+  padding: 8px 16px;
+  background: var(--interactive-accent);
+  border: 1px solid var(--interactive-accent);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-on-accent);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.obsidian-smartpaste-add-button:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.obsidian-smartpaste-close-button {
+  padding: 8px 16px;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-normal);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.obsidian-smartpaste-close-button:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* 已选文件卡片样�?*/
+.obsidian-smartpaste-selected-files-container {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--background-modifier-border);
+}
+
+.obsidian-smartpaste-selected-files-title {
+  margin: 0 0 16px 0;
+  color: var(--text-normal);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.obsidian-smartpaste-file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.obsidian-smartpaste-file-card {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 32px;
+}
+
+.obsidian-smartpaste-file-card:hover {
+  border-color: var(--interactive-accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.obsidian-smartpaste-file-card-icon {
+  font-size: 14px;
+  margin-right: 6px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.obsidian-smartpaste-file-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.obsidian-smartpaste-file-card-name {
+  font-weight: 500;
+  color: var(--text-normal);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+
+.obsidian-smartpaste-file-card-path {
+  font-size: 9px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.0;
+  margin-top: 0px;
+}
+
+.obsidian-smartpaste-file-card-actions {
+  display: flex;
+  gap: 1px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.obsidian-smartpaste-file-card-button {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.obsidian-smartpaste-file-card-button:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.obsidian-smartpaste-file-card-button:active {
+  transform: scale(0.95);
+}
+
+/* 响应式设�?*/
+@media (max-width: 768px) {
+  .obsidian-smartpaste-file-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .obsidian-smartpaste-button-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .obsidian-smartpaste-button-container > button {
+    width: 100%;
+  }
+}
+
+/* 动画效果 */
+.obsidian-smartpaste-file-item {
+  animation: obsidian-smartpaste-fade-in 0.2s ease-out;
+}
+
+@keyframes obsidian-smartpaste-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+} 
