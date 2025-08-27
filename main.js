@@ -69,7 +69,7 @@ var PASTE_FORMATS = {
   },
   plain: {
     name: "\u7EAF\u6587\u672C",
-    template: "plain"
+    template: "{content}"
   }
 };
 var CONTENT_SORT_OPTIONS = {
