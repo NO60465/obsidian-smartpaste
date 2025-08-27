@@ -39,7 +39,7 @@ export const PASTE_FORMATS = {
   },
   plain: {
     name: '纯文本',
-    template: 'plain'
+    template: '{content}'
   }
 };
 
